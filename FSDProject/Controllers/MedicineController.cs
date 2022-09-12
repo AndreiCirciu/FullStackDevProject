@@ -1,0 +1,108 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FSDProject.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MedicineController : ControllerBase
+    {
+
+        private static List<Medicine> medicines = new List<Medicine>
+            {
+                new Medicine {
+                    ID = 0,
+                    Name = "Nurofen",
+                    CompanyName = "Pfizer",
+                    Price = 12,
+                    Quantity = 20,
+                    ImageUrl = "http",
+                    Uses = "Cold",
+                    ExpireDate = "23.10.2024"
+                },
+
+                new Medicine {
+                    ID = 1,
+                    Name = "Zinat",
+                    CompanyName = "MediCan",
+                    Price = 37,
+                    Quantity = 12,
+                    ImageUrl = "http",
+                    Uses = "BadCold",
+                    ExpireDate = "23.04.2023"
+                },
+
+                new Medicine {
+                    ID = 2,
+                    Name = "Tusocalm",
+                    CompanyName = "Pfizer",
+                    Price = 7,
+                    Quantity = 220,
+                    ImageUrl = "http",
+                    Uses = "Cough",
+                    ExpireDate = "12.06.2024"
+                }
+            };
+        private readonly DataContext _context;
+        public MedicineController(DataContext context)
+        {
+             _context = context;
+        }
+
+        [HttpPost("addMedicine")]
+        public async Task<ActionResult<List<Medicine>>> AddMedicine(Medicine medicine)
+        {
+            _context.Medicines.Add(medicine);
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Medicines.ToListAsync());
+        }
+
+        [HttpPut("updateMedicine")]
+        public async Task<ActionResult<List<Medicine>>> UpdateMedicine(Medicine  request)
+        {
+            var dbMedicine = await _context.Medicines.FindAsync(request.ID);
+            if (dbMedicine == null)
+                return BadRequest("Medicine not found");
+            dbMedicine.Name = request.Name;
+            dbMedicine.CompanyName = request.CompanyName;
+            dbMedicine.ExpireDate = request.ExpireDate;
+            dbMedicine.ImageUrl = request.ImageUrl;
+            dbMedicine.Price = request.Price;
+            dbMedicine.Quantity = request.Quantity;
+            dbMedicine.Uses = request.Uses;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Medicines.ToListAsync());
+        }
+
+        [HttpGet("getAllMedicine")]
+        public async Task<ActionResult<List<Medicine>>> Get()
+        {       
+            return Ok(await _context.Medicines.ToListAsync());
+        }       
+
+        [HttpGet("getMedicineById")]
+        public async Task<ActionResult<Medicine>> Get(int id)
+        {
+            var medicine = await _context.Medicines.FindAsync(id);
+            if (medicine == null)
+                return BadRequest("Medicine not found");
+            return Ok(medicine);
+        }
+
+        [HttpDelete("deleteMedicineById")]
+        public async Task<ActionResult<List<Medicine>>> Delete(int id)
+        {
+            var dbMedicine = await _context.Medicines.FindAsync(id);
+            if (dbMedicine == null)
+                return BadRequest("Medicine not found");
+
+            _context.Medicines.Remove(dbMedicine);
+            await _context.SaveChangesAsync();  
+
+            return Ok(await _context.Medicines.ToListAsync());
+        }
+    }
+}
