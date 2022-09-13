@@ -13,7 +13,6 @@ namespace FSDProjectAPI.Controllers
                    ID = 1,
                    FirstName = "Andrei",
                    LastName = "Circiu",
-                   Password = "abc",
                    DateOfBirth = "25.05.1998",
                    Phone = "07123123",
                    Address = "Bucuresti",
@@ -25,7 +24,6 @@ namespace FSDProjectAPI.Controllers
                    ID = 1,
                    FirstName = "Ionut",
                    LastName = "Cercel",
-                   Password = "abcdef",
                    DateOfBirth = "29.08.1996",
                    Phone = "0714893",
                    Address = "Bucuresti",
@@ -37,7 +35,6 @@ namespace FSDProjectAPI.Controllers
                    ID = 1,
                    FirstName = "Petrica",
                    LastName = "Cercel",
-                   Password = "abcdefgh",
                    DateOfBirth = "19.02.1968",
                    Phone = "0711299",
                    Address = "Bucuresti",
@@ -45,26 +42,66 @@ namespace FSDProjectAPI.Controllers
                    IsAdmin = 0
                 }
             };
+        private readonly DataContext _context;
+        public AccountController(DataContext context)
+        {
+            _context = context;
+        }
+
         [HttpPost("addAccount")]
         public async Task<ActionResult<List<Account>>> AddAccount(Account account)
         {
-            accounts.Add(account);
-            return Ok(accounts);
+            _context.Accounts.Add(account);
+            await _context.SaveChangesAsync();
+            return Ok(await _context.Accounts.ToListAsync());     
         }
 
         [HttpPut("updateAccount")]
         public async Task<ActionResult<List<Account>>> UpdateAccount(Account request)
         {
-            var account = accounts.Find(m => m.ID == request.ID);
+            var dbAccount = await _context.Accounts.FindAsync(request.ID);
+            if (dbAccount == null)
+                return BadRequest("Account not found.");
+            dbAccount.FirstName = request.FirstName;
+            dbAccount.LastName = request.LastName;
+            dbAccount.DateOfBirth = request.DateOfBirth;
+            dbAccount.Phone = request.Phone;
+            dbAccount.Address = request.Address;
+            dbAccount.Funds = request.Funds;
+            dbAccount.IsAdmin = request.IsAdmin;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Accounts.ToListAsync());
+        }
+
+        [HttpGet("getAllAccounts")]
+        public async Task<ActionResult<List<Account>>> Get()
+        {
+            return Ok(await _context.Accounts.ToListAsync());
+        }
+
+        [HttpGet("getAccountById")]
+        public async Task<ActionResult<Account>> Get(int id)
+        {
+            var account = await _context.Accounts.FindAsync(id);
             if (account == null)
-                return BadRequest("Medicine not found");
-            account.FirstName = request.FirstName;
-            account.LastName = request.LastName;
-            account.FirstName = request.FirstName;
-            account.FirstName = request.FirstName;
-            account.FirstName = request.FirstName;
-            account.FirstName = request.FirstName;
-            return Ok(accounts);
+                return BadRequest("Account not found.");
+            return Ok(account);
+        }
+
+        [HttpDelete("deleteAccountById")]
+        public async Task<ActionResult<List<Account>>> Delete(int id)
+        {
+            var dbAccount = await _context.Accounts.FindAsync(id);
+            if (dbAccount == null)
+                return BadRequest("Account not found.");
+
+            _context.Accounts.Remove(dbAccount);
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Accounts.ToListAsync());
         }
     }
 }
+

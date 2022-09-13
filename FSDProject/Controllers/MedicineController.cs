@@ -63,7 +63,7 @@ namespace FSDProject.Controllers
         {
             var dbMedicine = await _context.Medicines.FindAsync(request.ID);
             if (dbMedicine == null)
-                return BadRequest("Medicine not found");
+                return BadRequest("Medicine not found.");
             dbMedicine.Name = request.Name;
             dbMedicine.CompanyName = request.CompanyName;
             dbMedicine.ExpireDate = request.ExpireDate;
@@ -88,7 +88,7 @@ namespace FSDProject.Controllers
         {
             var medicine = await _context.Medicines.FindAsync(id);
             if (medicine == null)
-                return BadRequest("Medicine not found");
+                return BadRequest("Medicine not found.");
             return Ok(medicine);
         }
 
@@ -97,7 +97,7 @@ namespace FSDProject.Controllers
         {
             var dbMedicine = await _context.Medicines.FindAsync(id);
             if (dbMedicine == null)
-                return BadRequest("Medicine not found");
+                return BadRequest("Medicine not found.");
 
             _context.Medicines.Remove(dbMedicine);
             await _context.SaveChangesAsync();  
