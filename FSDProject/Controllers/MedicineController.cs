@@ -18,7 +18,7 @@ namespace FSDProject.Controllers
                     Quantity = 20,
                     ImageUrl = "http",
                     Uses = "Cold",
-                    ExpireDate = "23.10.2024"
+                    ExpirationDate = "23.10.2024"
                 },
 
                 new Medicine {
@@ -29,7 +29,7 @@ namespace FSDProject.Controllers
                     Quantity = 12,
                     ImageUrl = "http",
                     Uses = "BadCold",
-                    ExpireDate = "23.04.2023"
+                    ExpirationDate = "23.04.2023"
                 },
 
                 new Medicine {
@@ -40,7 +40,7 @@ namespace FSDProject.Controllers
                     Quantity = 220,
                     ImageUrl = "http",
                     Uses = "Cough",
-                    ExpireDate = "12.06.2024"
+                    ExpirationDate = "12.06.2024"
                 }
             };
         private readonly DataContext _context;
@@ -66,7 +66,7 @@ namespace FSDProject.Controllers
                 return BadRequest("Medicine not found.");
             dbMedicine.Name = request.Name;
             dbMedicine.CompanyName = request.CompanyName;
-            dbMedicine.ExpireDate = request.ExpireDate;
+            dbMedicine.ExpirationDate = request.ExpirationDate;
             dbMedicine.ImageUrl = request.ImageUrl;
             dbMedicine.Price = request.Price;
             dbMedicine.Quantity = request.Quantity;

@@ -13,15 +13,16 @@ namespace FSDProjectAPI.Controllers
     {
         public static User user = new User();
         private readonly IConfiguration _configuration;
+        private readonly DataContext _context;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, DataContext context)
         {
             _configuration = configuration;
+            _context = context;
 
         }
 
         [HttpPost("register")]
-
         public async Task<ActionResult<User>> Register(UserDto request)
         {
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -30,7 +31,11 @@ namespace FSDProjectAPI.Controllers
             user.PasswordHash = passwordHash;   
             user.PasswordSalt = passwordSalt;
 
-            return Ok(user);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return Ok(await _context.Users.ToListAsync());
+            
+            
         }
 
         [HttpPost("login")]

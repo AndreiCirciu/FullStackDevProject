@@ -15,7 +15,7 @@
 
         public string Uses { get; set; }
 
-        public string ExpireDate { get; set; }
+        public string ExpirationDate { get; set; }
 
     }
 }
