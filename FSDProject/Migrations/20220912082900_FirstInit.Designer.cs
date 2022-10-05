@@ -23,7 +23,7 @@ namespace FSDProjectAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("FSDProject.Medicine", b =>
+            modelBuilder.Entity("FSDProjectAPI.Medicine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

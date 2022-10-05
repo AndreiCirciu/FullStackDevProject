@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FSDProject.Controllers
+namespace FSDProjectAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -46,10 +46,11 @@ namespace FSDProject.Controllers
         private readonly DataContext _context;
         public MedicineController(DataContext context)
         {
-             _context = context;
+            _context = context;
         }
 
         [HttpPost("addMedicine")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<Medicine>>> AddMedicine(Medicine medicine)
         {
             _context.Medicines.Add(medicine);
@@ -59,7 +60,8 @@ namespace FSDProject.Controllers
         }
 
         [HttpPut("updateMedicine")]
-        public async Task<ActionResult<List<Medicine>>> UpdateMedicine(Medicine  request)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<List<Medicine>>> UpdateMedicine(Medicine request)
         {
             var dbMedicine = await _context.Medicines.FindAsync(request.ID);
             if (dbMedicine == null)
@@ -71,6 +73,7 @@ namespace FSDProject.Controllers
             dbMedicine.Price = request.Price;
             dbMedicine.Quantity = request.Quantity;
             dbMedicine.Uses = request.Uses;
+            dbMedicine.ExpirationDate = request.ExpirationDate;
 
             await _context.SaveChangesAsync();
 
@@ -78,12 +81,26 @@ namespace FSDProject.Controllers
         }
 
         [HttpGet("getAllMedicine")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult<List<Medicine>>> Get()
-        {       
+        {
             return Ok(await _context.Medicines.ToListAsync());
-        }       
+        }
+
+        [HttpGet("getMedicineByUses")]
+        [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult<Medicine>> GetByUses(string uses)
+        {
+            var medicine = await _context.Medicines.FirstOrDefaultAsync(e => e.Uses == uses);
+            if (medicine == null)
+            {
+                return BadRequest("There was no medicine found for that use");
+            }
+            return Ok(medicine);
+        }
 
         [HttpGet("getMedicineById")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult<Medicine>> Get(int id)
         {
             var medicine = await _context.Medicines.FindAsync(id);
@@ -93,6 +110,7 @@ namespace FSDProject.Controllers
         }
 
         [HttpDelete("deleteMedicineById")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<Medicine>>> Delete(int id)
         {
             var dbMedicine = await _context.Medicines.FindAsync(id);
@@ -100,7 +118,7 @@ namespace FSDProject.Controllers
                 return BadRequest("Medicine not found.");
 
             _context.Medicines.Remove(dbMedicine);
-            await _context.SaveChangesAsync();  
+            await _context.SaveChangesAsync();
 
             return Ok(await _context.Medicines.ToListAsync());
         }

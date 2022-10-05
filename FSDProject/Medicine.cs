@@ -1,4 +1,4 @@
-﻿namespace FSDProject
+﻿namespace FSDProjectAPI
 {
     public class Medicine
     {
@@ -19,3 +19,4 @@
 
     }
 }
+

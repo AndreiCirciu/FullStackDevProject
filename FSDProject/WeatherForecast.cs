@@ -1,4 +1,4 @@
-namespace FSDProject
+namespace FSDProjectAPI
 {
     public class WeatherForecast
     {

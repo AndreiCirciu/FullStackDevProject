@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "FSDProject": {
+    "FSDProjectAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
